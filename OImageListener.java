@@ -1,7 +1,7 @@
-import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 interface OImageListener {
-	void onImageFound(Point loc, BufferedImage imageFound);
-	void onImageNotFound();
+	public void onImageFound(Rectangle foundRect, BufferedImage imageFound);
+	public void onImageNotFound();
 }

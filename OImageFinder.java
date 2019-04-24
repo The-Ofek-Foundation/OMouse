@@ -42,14 +42,16 @@ public class OImageFinder extends TimerTask {
 	}
 
 	private static Point findImageDifference(BufferedImage image1, BufferedImage image2,
-	                                         int startX, int startY, int width, int height) {
-		int endX = startX + width;
-		int endY = startY + height;
+	                                         int startX1, int startY1,
+	                                         int startX2, int startY2,
+	                                         int width, int height) {
+		int endX1 = startX1 + width;
+		int endY1 = startY1 + height;
 
-		for (int x = startX; x < endX; ++x)
-			for (int y = startY; y < endY; ++y)
-				if (image1.getRGB(x, y) != image2.getRGB(x, y))
-					return new Point(x, y);
+		for (int x1 = startX1, x2 = startX2; x1 < endX1; ++x1, ++x2)
+			for (int y1 = startY1, y2 = startY2; y1 < endY1; ++y1, ++y2)
+				if (image1.getRGB(x1, y1) != image2.getRGB(x2, y2))
+					return new Point(x1, y1);
 
 		return NOT_FOUND_POINT;
 	}
@@ -63,7 +65,7 @@ public class OImageFinder extends TimerTask {
 
 		for (int x = startX; x < endX - imageWidth; ++x)
 			for (int y = startY; y < endY - imageHeight; ++y)
-				if (findImageDifference(outer, inner, x, y, imageWidth, imageHeight) != NOT_FOUND_POINT)
+				if (findImageDifference(outer, inner, x, y, 0, 0, imageWidth, imageHeight) == NOT_FOUND_POINT)
 					return new Point(x, y);
 
 		return NOT_FOUND_POINT;
@@ -82,7 +84,10 @@ public class OImageFinder extends TimerTask {
 			Point foundLoc = findImageInImage(screenCapture, image);
 
 			if (foundLoc != NOT_FOUND_POINT) {
-				listener.onImageFound(foundLoc, image);
+				listener.onImageFound(new Rectangle((int)(foundLoc.getX() + viewingArea.getX()),
+				                                    (int)(foundLoc.getY() + viewingArea.getY()),
+				                                    image.getWidth(), image.getHeight()),
+				                                    image);
 				return;
 			}
 		}
